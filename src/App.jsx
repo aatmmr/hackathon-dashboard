@@ -414,6 +414,9 @@ function App() {
             <div className="teams-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {teams.map(team => (
                 <div key={team.id} className="card bg-neutral-2 border-neutral-6">
+                  {team.logo && (
+                    <img src={team.logo} alt="Team logo" className="w-full max-h-32 object-cover" />
+                  )}
                   <div className="p-4">
                     <div className="flex justify-between items-start mb-4">
                       <div>
@@ -437,9 +440,6 @@ function App() {
                         </button>
                       </div>
                     </div>
-                    {team.logo && (
-                      <img src={team.logo} alt="Team logo" className="mb-4 max-h-32 mx-auto" />
-                    )}
                     <p className="mb-2 text-sm text-neutral-11 font-mono">{team.description}</p>
                     <div className="flex items-center gap-2 text-neutral-11 font-mono">
                       <Buildings />
