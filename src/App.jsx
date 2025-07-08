@@ -153,17 +153,11 @@ function CountdownTimer() {
             </div>
           )}
 
-          <button className="btn font-mono" onClick={() => setIsSettingTime(true)}>
-            <Clock />
-            $ set-time
-          </button>
-        </div>
-
-        <div className="flex items-center justify-between mb-4">
-          <div className="text-4xl font-mono font-bold">
-            {formatTime(totalSeconds)}
-          </div>
           <div className="flex gap-2">
+            <button className="btn font-mono" onClick={() => setIsSettingTime(true)}>
+              <Clock />
+              $ set-time
+            </button>
             <button
               className="btn btn-primary font-mono"
               onClick={() => setIsRunning(!isRunning)}
@@ -171,6 +165,12 @@ function CountdownTimer() {
               {isRunning ? <Pause /> : <Play />}
               {isRunning ? '$ pause' : '$ start'}
             </button>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-center mb-4">
+          <div className="text-4xl font-mono font-bold">
+            {formatTime(totalSeconds)}
           </div>
         </div>
 
