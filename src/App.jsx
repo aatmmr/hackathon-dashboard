@@ -259,7 +259,7 @@ function TeamForm({ team, onSubmit, onCancel, title, submitLabel }) {
         <div
           onDrop={handleDrop}
           onDragOver={handleDragOver}
-          className="upload-area border-2 border-dashed border-neutral-6 rounded-lg p-4 text-center cursor-pointer"
+          className="upload-area border-2 border-dashed border-neutral-6 p-4 text-center cursor-pointer"
         >
           {formData.logo ? (
             <img src={formData.logo} alt="Team logo" className="mb-4 max-h-32 mx-auto" />
@@ -327,7 +327,7 @@ function App() {
     <div className="app">
       <div className="container min-h-[80vh]">
         {/* Header Section */}
-        <div className="header flex justify-between items-center mb-6 bg-neutral-2 p-4 rounded-lg border border-neutral-6">
+        <div className="header flex justify-between items-center mb-6 bg-neutral-2 p-4 border border-neutral-6">
           <div className="flex items-center gap-2">
             <Terminal className="text-mint-11" size={24} />
             <h1 className="text-2xl font-bold font-mono">Hackathon Dashboard</h1>
@@ -406,7 +406,7 @@ function App() {
 
           {/* Teams List */}
           {teams.length === 0 ? (
-            <div className="text-center p-8 bg-neutral-2 rounded-lg border border-neutral-6">
+            <div className="text-center p-8 bg-neutral-2 border border-neutral-6">
               <p className="text-lg font-mono text-neutral-11">No teams registered yet</p>
               <p className="font-mono text-neutral-11">Click '$ new-team' to add one</p>
             </div>
