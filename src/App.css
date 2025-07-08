@@ -127,7 +127,7 @@ body {
 /* Header styles */
 .header {
   background: #000000;
-  border: 2px solid #00ff41;
+  border: 1px solid #00ff41;
   box-shadow: 0 0 5px #00ff41, inset 0 0 5px rgba(0, 255, 65, 0.05);
   animation: terminal-glow 3s ease-in-out infinite alternate;
 }
