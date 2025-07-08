@@ -66,9 +66,19 @@ body {
 .border-dashed { border-style: dashed; }
 .w-20 { width: 5rem; }
 .max-h-32 { max-height: 8rem; }
+.h-48 { height: 20rem; }
 .mx-auto { margin-left: auto; margin-right: auto; }
 .cursor-pointer { cursor: pointer; }
 .space-y-4 > * + * { margin-top: 1rem; }
+
+/* Position utilities */
+.absolute { position: absolute; }
+.relative { position: relative; }
+.top-2 { top: 0.5rem; }
+.right-2 { right: 0.5rem; }
+.z-10 { z-index: 10; }
+.w-full { width: 100%; }
+.object-cover { object-fit: cover; }
 
 /* Grid layout */
 .grid { display: grid; }

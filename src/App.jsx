@@ -414,31 +414,29 @@ function App() {
             <div className="teams-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {teams.map(team => (
                 <div key={team.id} className="card bg-neutral-2 border-neutral-6">
+                  <div className="absolute top-2 right-2 flex gap-2 z-10">
+                    <button
+                      className="btn btn-plain text-neutral-11 hover:text-neutral-12"
+                      onClick={() => setEditingTeam(team)}
+                      aria-label="Edit team"
+                    >
+                      <Pencil />
+                    </button>
+                    <button
+                      className="btn btn-plain text-red-9 hover:text-red-10"
+                      onClick={() => setTeamToDelete(team)}
+                      aria-label="Delete team"
+                    >
+                      <Trash />
+                    </button>
+                  </div>
                   {team.logo && (
-                    <img src={team.logo} alt="Team logo" className="w-full max-h-32 object-cover" />
+                    <img src={team.logo} alt="Team logo" className="w-full h-48 object-cover" />
                   )}
                   <div className="p-4">
-                    <div className="flex justify-between items-start mb-4">
-                      <div>
-                        <h3 className="text-lg font-bold font-mono">{team.name}</h3>
-                        <p className="text-neutral-11 font-mono">{team.topic}</p>
-                      </div>
-                      <div className="flex gap-2">
-                        <button
-                          className="btn btn-plain text-neutral-11 hover:text-neutral-12"
-                          onClick={() => setEditingTeam(team)}
-                          aria-label="Edit team"
-                        >
-                          <Pencil />
-                        </button>
-                        <button
-                          className="btn btn-plain text-red-9 hover:text-red-10"
-                          onClick={() => setTeamToDelete(team)}
-                          aria-label="Delete team"
-                        >
-                          <Trash />
-                        </button>
-                      </div>
+                    <div className="mb-4">
+                      <h3 className="text-lg font-bold font-mono">{team.name}</h3>
+                      <p className="text-neutral-11 font-mono">{team.topic}</p>
                     </div>
                     <p className="mb-2 text-sm text-neutral-11 font-mono">{team.description}</p>
                     <div className="flex items-center gap-2 text-neutral-11 font-mono">
