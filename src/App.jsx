@@ -51,6 +51,7 @@ function CountdownTimer() {
   const [title, setTitle] = React.useState("Hackathon Time Remaining");
   const [isEditing, setIsEditing] = React.useState(false);
   const [totalSeconds, setTotalSeconds] = React.useState(3600); // Default: 1 hour
+  const [initialSeconds, setInitialSeconds] = React.useState(3600); // Track initial time for progress
   const [isRunning, setIsRunning] = React.useState(false);
   const [isSettingTime, setIsSettingTime] = React.useState(false);
   const [hours, setHours] = React.useState("01");
@@ -75,8 +76,12 @@ function CountdownTimer() {
       parseInt(minutes || "0") * 60 + 
       parseInt(seconds || "0");
     setTotalSeconds(newTotalSeconds);
+    setInitialSeconds(newTotalSeconds); // Update initial time for progress calculation
     setIsSettingTime(false);
   };
+
+  // Calculate progress percentage (0-100) - reversed to show remaining time
+  const progressPercentage = initialSeconds > 0 ? (totalSeconds / initialSeconds) * 100 : 0;
 
   return (
     <div className="card mb-6 bg-neutral-2 border-neutral-6">
@@ -154,7 +159,7 @@ function CountdownTimer() {
           </button>
         </div>
 
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-4">
           <div className="text-4xl font-mono font-bold">
             {formatTime(totalSeconds)}
           </div>
@@ -166,6 +171,18 @@ function CountdownTimer() {
               {isRunning ? <Pause /> : <Play />}
               {isRunning ? '$ pause' : '$ start'}
             </button>
+          </div>
+        </div>
+
+        {/* Progress Bar */}
+        <div className="progress-container mb-2">
+          <div className="progress-bar">
+            <div 
+              className="progress-fill"
+              style={{ width: `${Math.min(progressPercentage, 100)}%` }}
+            />
+          </div>
+          <div className="flex justify-between text-sm font-mono text-neutral-11 mt-1">
           </div>
         </div>
       </div>
@@ -313,12 +330,14 @@ function App() {
         <div className="header flex justify-between items-center mb-6 bg-neutral-2 p-4 rounded-lg border border-neutral-6">
           <div className="flex items-center gap-2">
             <Terminal className="text-mint-11" size={24} />
-            <h1 className="text-2xl font-bold font-mono">Copilot Hackathon Teams</h1>
+            <h1 className="text-2xl font-bold font-mono">Hackathon Dashboard</h1>
           </div>
         </div>
 
         {/* Teams Section */}
         <section className="mb-6">
+          <CountdownTimer />
+
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-mono">Registered Teams</h2>
             <button 
@@ -329,8 +348,6 @@ function App() {
               $ new-team
             </button>
           </div>
-
-          <CountdownTimer />
 
           {/* Add Team Dialog */}
           {isAddingTeam && (
