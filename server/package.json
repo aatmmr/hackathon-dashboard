@@ -1,0 +1,25 @@
+{
+  "name": "hackathon-dashboard-server",
+  "version": "1.0.0",
+  "description": "WebSocket server for Hackathon Dashboard shared sessions",
+  "main": "websocket-server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node websocket-server.js",
+    "dev": "node --watch websocket-server.js"
+  },
+  "keywords": [
+    "websocket",
+    "real-time",
+    "collaboration"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "ws": "^8.18.0",
+    "uuid": "^10.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

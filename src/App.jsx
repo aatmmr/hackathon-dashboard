@@ -1,5 +1,4 @@
 import * as React from "react";
-import { createRoot } from "react-dom/client";
 import { 
   Plus,
   Users,
@@ -21,7 +20,7 @@ const useKV = (key, defaultValue) => {
     try {
       const item = window.localStorage.getItem(key);
       return item ? JSON.parse(item) : defaultValue;
-    } catch (error) {
+    } catch {
       return defaultValue;
     }
   });
