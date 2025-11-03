@@ -9,6 +9,9 @@ This is the WebSocket server that enables real-time shared sessions for the Hack
 - Automatic client tracking
 - Graceful connection handling
 - Heartbeat/ping-pong support
+- **Session persistence with Azure Table Storage**
+- **Configurable session expiration**
+- **Automatic cleanup of expired sessions**
 
 ## Installation
 
@@ -32,9 +35,80 @@ npm start
 
 ## Environment Variables
 
+### Required
 - `PORT`: Port to run the server on (default: 8080)
 
+### Session Persistence (Optional)
+- `ENABLE_PERSISTENCE`: Enable session persistence (default: true)
+- `STORAGE_TYPE`: Storage backend - `memory` or `azure-table` (default: memory)
+- `AZURE_STORAGE_CONNECTION_STRING`: Azure Storage connection string (required for azure-table)
+- `SESSION_MAX_DURATION_HOURS`: Max session duration in hours (default: 24)
+
+### Example Configuration
+
+**Memory-only (no persistence):**
+```bash
+PORT=8080
+ENABLE_PERSISTENCE=false
+```
+
+**Azure Table Storage:**
+```bash
+PORT=8080
+ENABLE_PERSISTENCE=true
+STORAGE_TYPE=azure-table
+AZURE_STORAGE_CONNECTION_STRING="DefaultEndpointsProtocol=https;AccountName=..."
+SESSION_MAX_DURATION_HOURS=24
+```
+
+## Session Persistence
+
+### How It Works
+
+1. **Session Creation**: When a client joins a session, the server loads persisted data if available
+2. **State Updates**: All state changes are automatically persisted to the configured storage backend
+3. **Expiration**: Sessions automatically expire after the configured duration (default 24 hours)
+4. **Cleanup**: Expired sessions are automatically cleaned up every hour
+
+### Storage Backends
+
+**Azure Table Storage (Recommended for Production)**
+- Durable: Survives server restarts
+- Scalable: Handles many concurrent sessions
+- Managed: No maintenance required
+- Cost-effective: Pay only for storage used
+
+**Memory Storage (Development/Testing)**
+- Fast: No network latency
+- Simple: No setup required
+- Ephemeral: Lost on server restart
+
+### Session Lifecycle
+
+```
+Client joins → Load persisted state → Client receives state
+                     ↓
+State changes → Persist to storage → Broadcast to clients
+                     ↓
+Session expires → Automatic cleanup
+```
+
 ## Deployment
+
+### Azure (Recommended)
+
+See [AZURE_DEPLOYMENT.md](../AZURE_DEPLOYMENT.md) for complete guide.
+
+Quick setup:
+```bash
+# Deploy to Azure App Service
+az webapp create --name hackathon-ws-server --runtime "NODE:18-lts"
+az webapp config set --web-sockets-enabled true
+az webapp config appsettings set --settings \
+  ENABLE_PERSISTENCE=true \
+  STORAGE_TYPE=azure-table \
+  AZURE_STORAGE_CONNECTION_STRING="..."
+```
 
 ### Railway
 

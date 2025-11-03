@@ -5,22 +5,93 @@ This guide explains how to set up and deploy shared sessions via WebSocket for t
 ## Overview
 
 The WebSocket implementation consists of two parts:
-1. **Frontend**: React app (deployed on GitHub Pages)
-2. **Backend**: WebSocket server (deployed separately)
+1. **Frontend**: React app
+2. **Backend**: WebSocket server
+
+Both can be deployed together on Azure or separately on different platforms.
 
 ## Prerequisites
 
 - Node.js 18+ installed
 - Git installed
-- Account on hosting platform (Railway, Render, or Heroku recommended)
+- Azure account (recommended) or account on alternative hosting platform
 
 ## Quick Start
 
 ### 1. Set Up WebSocket Server
 
-The WebSocket server needs to be hosted separately from the static frontend.
+#### Option A: Deploy to Azure (Recommended)
 
-#### Option A: Deploy to Railway (Recommended)
+Azure can host both the frontend and backend together:
+
+**Using Azure Static Web Apps + Azure Functions:**
+
+1. Create Azure Static Web App:
+   ```bash
+   az staticwebapp create \
+     --name hackathon-dashboard \
+     --resource-group your-resource-group \
+     --source https://github.com/your-username/hackathon-dashboard \
+     --location eastus2 \
+     --branch main \
+     --app-location "/" \
+     --output-location "dist"
+   ```
+
+2. Create Azure App Service for WebSocket server:
+   ```bash
+   az webapp create \
+     --resource-group your-resource-group \
+     --plan your-app-service-plan \
+     --name hackathon-ws-server \
+     --runtime "NODE:18-lts"
+   ```
+
+3. Configure environment variables:
+   ```bash
+   az webapp config appsettings set \
+     --resource-group your-resource-group \
+     --name hackathon-ws-server \
+     --settings PORT=8080 NODE_ENV=production AZURE_STORAGE_CONNECTION_STRING="your-connection-string"
+   ```
+
+4. Deploy server code:
+   ```bash
+   cd server
+   zip -r deploy.zip .
+   az webapp deployment source config-zip \
+     --resource-group your-resource-group \
+     --name hackathon-ws-server \
+     --src deploy.zip
+   ```
+
+5. Get WebSocket URL:
+   ```
+   wss://hackathon-ws-server.azurewebsites.net
+   ```
+
+**Using Azure Container Instances (Alternative):**
+
+1. Build and push Docker image:
+   ```bash
+   cd server
+   docker build -t hackathon-ws-server .
+   docker tag hackathon-ws-server yourregistry.azurecr.io/hackathon-ws-server
+   docker push yourregistry.azurecr.io/hackathon-ws-server
+   ```
+
+2. Deploy container:
+   ```bash
+   az container create \
+     --resource-group your-resource-group \
+     --name hackathon-ws-server \
+     --image yourregistry.azurecr.io/hackathon-ws-server \
+     --dns-name-label hackathon-ws \
+     --ports 8080 \
+     --environment-variables PORT=8080 AZURE_STORAGE_CONNECTION_STRING="your-connection-string"
+   ```
+
+#### Option B: Deploy to Railway
 
 1. Create account at [railway.app](https://railway.app)
 2. Create new project from GitHub repository

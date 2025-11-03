@@ -30,7 +30,7 @@ This is a React project scaffolded with Vite, intended for static deployment on 
 
 ## WebSocket Shared Sessions (Optional)
 
-This application supports real-time collaboration through WebSocket connections. Multiple users can share the same session and see updates in real-time.
+This application supports real-time collaboration through WebSocket connections. Multiple users can share the same session and see updates in real-time. Sessions are persisted with configurable expiration.
 
 ### Setup
 
@@ -48,7 +48,13 @@ This application supports real-time collaboration through WebSocket connections.
      ```
    - The server runs on `ws://localhost:8080` by default
 
-3. **For production:**
+3. **For production on Azure (Recommended):**
+   - Deploy both frontend and backend to Azure App Service
+   - Configure Azure Table Storage for session persistence
+   - Sessions persist with configurable max duration (default 24 hours)
+   - See [AZURE_DEPLOYMENT.md](./AZURE_DEPLOYMENT.md) for detailed Azure deployment
+
+4. **For production on other platforms:**
    - Deploy the WebSocket server to Railway, Render, or your preferred platform
    - Set `VITE_WEBSOCKET_URL` to your server URL (e.g., `wss://your-server.railway.app`)
    - See [WEBSOCKET_SETUP.md](./WEBSOCKET_SETUP.md) for detailed deployment instructions
@@ -69,8 +75,9 @@ VITE_ENABLE_WEBSOCKET=false
 ```
 
 For more details, see:
+- [AZURE_DEPLOYMENT.md](./AZURE_DEPLOYMENT.md) - Azure deployment guide (recommended)
 - [WEBSOCKET_INVESTIGATION.md](./WEBSOCKET_INVESTIGATION.md) - Technical investigation and architecture
-- [WEBSOCKET_SETUP.md](./WEBSOCKET_SETUP.md) - Setup and deployment guide
+- [WEBSOCKET_SETUP.md](./WEBSOCKET_SETUP.md) - Setup and deployment guide for all platforms
 
 ## Deploying to GitHub Pages
 

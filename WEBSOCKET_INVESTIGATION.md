@@ -21,10 +21,11 @@ Investigate required additions to allow shared sessions via WebSocket in the Hac
 ### Architecture Overview
 To enable shared sessions via WebSocket, we need:
 
-1. **WebSocket Server (External)**
-   - Must be hosted separately (not on GitHub Pages)
-   - Options: Heroku, Railway, Render, AWS, Azure, or self-hosted
+1. **WebSocket Server**
+   - Can be hosted with frontend on Azure or separately
+   - Options: Azure App Service (recommended), Railway, Render, AWS, or self-hosted
    - Responsible for broadcasting state changes to all connected clients
+   - Optional session persistence with Azure Table Storage
 
 2. **WebSocket Client (Frontend)**
    - Connect to external WebSocket server
@@ -36,6 +37,7 @@ To enable shared sessions via WebSocket, we need:
    - Generate/join session IDs
    - Allow multiple users to share the same session
    - Persist session ID in URL or localStorage
+   - Optional server-side persistence with configurable expiration
 
 ### Required Components
 

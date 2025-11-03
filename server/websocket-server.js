@@ -1,13 +1,24 @@
 import { WebSocketServer } from 'ws';
 import { randomUUID } from 'crypto';
+import { 
+  saveSession, 
+  loadSession, 
+  updateSession, 
+  startCleanupScheduler,
+  getStorageStats 
+} from './sessionPersistence.js';
 
 const PORT = process.env.PORT || 8080;
+const ENABLE_PERSISTENCE = process.env.ENABLE_PERSISTENCE !== 'false'; // Default enabled
 
-// Store active sessions and their clients
+// Store active sessions and their clients (in-memory for active connections)
 const sessions = new Map();
 
 // Store client metadata
 const clients = new Map();
+
+// Store session state data (for persistence)
+const sessionStateData = new Map();
 
 // Create WebSocket server
 const wss = new WebSocketServer({ 
@@ -16,6 +27,18 @@ const wss = new WebSocketServer({
 });
 
 console.log(`WebSocket server started on port ${PORT}`);
+console.log(`Session persistence: ${ENABLE_PERSISTENCE ? 'enabled' : 'disabled'}`);
+
+// Start session cleanup scheduler if persistence is enabled
+let cleanupScheduler = null;
+if (ENABLE_PERSISTENCE) {
+  cleanupScheduler = startCleanupScheduler();
+  
+  // Log storage stats
+  getStorageStats().then(stats => {
+    console.log('Storage configuration:', stats);
+  });
+}
 
 // Helper function to broadcast message to all clients in a session
 function broadcastToSession(sessionId, message, excludeClientId = null) {
@@ -109,6 +132,25 @@ wss.on('connection', (ws) => {
 
           console.log(`Client ${clientId} joined session ${sessionId}`);
 
+          // Load persisted session data if available
+          if (ENABLE_PERSISTENCE) {
+            loadSession(sessionId).then(persistedData => {
+              if (persistedData) {
+                console.log(`Loaded persisted data for session ${sessionId}`);
+                sessionStateData.set(sessionId, persistedData);
+                
+                // Send persisted state to newly joined client
+                ws.send(JSON.stringify({
+                  type: 'session-state',
+                  state: persistedData,
+                  timestamp: Date.now()
+                }));
+              }
+            }).catch(error => {
+              console.error('Failed to load session data:', error);
+            });
+          }
+
           // Confirm join
           ws.send(JSON.stringify({
             type: 'joined',
@@ -139,6 +181,20 @@ wss.on('connection', (ws) => {
               message: 'Invalid session ID'
             }));
             return;
+          }
+
+          // Update session state data
+          if (!sessionStateData.has(sessionId)) {
+            sessionStateData.set(sessionId, {});
+          }
+          const stateData = sessionStateData.get(sessionId);
+          stateData[key] = value;
+          
+          // Persist state if enabled
+          if (ENABLE_PERSISTENCE) {
+            updateSession(sessionId, stateData).catch(error => {
+              console.error('Failed to persist session data:', error);
+            });
           }
 
           // Broadcast to all other clients in the session
@@ -246,6 +302,9 @@ setInterval(() => {
 // Graceful shutdown
 process.on('SIGTERM', () => {
   console.log('SIGTERM received, closing server...');
+  if (cleanupScheduler) {
+    cleanupScheduler();
+  }
   wss.close(() => {
     console.log('WebSocket server closed');
     process.exit(0);
@@ -254,6 +313,9 @@ process.on('SIGTERM', () => {
 
 process.on('SIGINT', () => {
   console.log('SIGINT received, closing server...');
+  if (cleanupScheduler) {
+    cleanupScheduler();
+  }
   wss.close(() => {
     console.log('WebSocket server closed');
     process.exit(0);
