@@ -104,12 +104,12 @@ server/
 ```json
 {
   "dependencies": {
-    "ws": "^8.18.0",
-    "express": "^4.18.2",
-    "uuid": "^9.0.0"
+    "ws": "^8.18.0"
   }
 }
 ```
+
+Note: Uses Node.js built-in `crypto.randomUUID()` for ID generation.
 
 ### Server Implementation
 

@@ -243,12 +243,12 @@ hackathon-dashboard/
 ```json
 {
   "dependencies": {
-    "ws": "^8.18.0",
-    "express": "^4.18.2",
-    "uuid": "^9.0.0"
+    "ws": "^8.18.0"
   }
 }
 ```
+
+Note: The server uses Node.js built-in `crypto.randomUUID()` for session ID generation (available in Node.js 14.17+), so no external UUID library is needed.
 
 ## Alternatives Considered
 
